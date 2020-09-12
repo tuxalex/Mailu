@@ -9,6 +9,7 @@ import re
 import requests
 import sys
 import traceback
+from socrate import system
 
 
 FETCHMAIL = """
@@ -26,6 +27,8 @@ poll "{host}" proto {protocol}  port {port}
     {options}
 """
 
+#Actual startup script
+os.environ["ADMIN_ADDRESS"] = system.get_host_address_from_environment("ADMIN", "admin")
 
 def extract_host_port(host_and_port, default_port):
     host, _, port = re.match('^(.*)(:([0-9]*))?$', host_and_port).groups()

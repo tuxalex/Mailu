@@ -11,17 +11,34 @@ log.basicConfig(stream=sys.stderr, level=os.environ.get("LOG_LEVEL", "WARNING"))
 # Actual startup script
 os.environ["FRONT_ADDRESS"] = system.resolve_address(os.environ.get("HOST_FRONT", "front"))
 os.environ["IMAP_ADDRESS"] = system.resolve_address(os.environ.get("HOST_IMAP", "imap"))
+os.environ["SMTP_ADDRESS"] = system.get_host_address_from_environment("SMTP", "smtp")
 
 os.environ["MAX_FILESIZE"] = str(int(int(os.environ.get("MESSAGE_SIZE_LIMIT"))*0.66/1048576))
 
-base = "/data/_data_/_default_/"
-shutil.rmtree(base + "domains/", ignore_errors=True)
-os.makedirs(base + "domains", exist_ok=True)
-os.makedirs(base + "configs", exist_ok=True)
+try:
+    domains = os.environ.get("MAIL_DOMAINS")
+except NameError:
+    domains = None
 
-conf.jinja("/default.ini", os.environ, "/data/_data_/_default_/domains/default.ini")
-conf.jinja("/application.ini", os.environ, "/data/_data_/_default_/configs/application.ini")
-conf.jinja("/php.ini", os.environ, "/usr/local/etc/php/conf.d/rainloop.ini")
+try:
+    overrides = os.environ.get("OVERRIDES_CONFIG")
+except NameError:
+    overrides = False
+
+if domains is None:
+  base = "/data/_data_/_default_/"
+  shutil.rmtree(base + "domains/", ignore_errors=True)
+  os.makedirs(base + "domains", exist_ok=True)
+  os.makedirs(base + "configs", exist_ok=True)
+
+  if not overrides:
+    conf.jinja("/default.ini", os.environ, base + "domains/default.ini")
+    conf.jinja("/application.ini", os.environ, base + "configs/application.ini")
+    conf.jinja("/php.ini", os.environ, "/usr/local/etc/php/conf.d/rainloop.ini")
+
+else:
+  os.system("touch /var/www/html/MULTIPLY")
+  os.system("chown www-data:www-data /var/www/html/MULTIPLY")
 
 os.system("chown -R www-data:www-data /data")
 
