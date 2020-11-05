@@ -29,6 +29,7 @@ poll "{host}" proto {protocol}  port {port}
 
 #Actual startup script
 os.environ["ADMIN_ADDRESS"] = system.get_host_address_from_environment("ADMIN", "admin")
+os.environ["ADMIN_SMTP"] = system.get_host_address_from_environment("SMTP", "smtp")
 
 def extract_host_port(host_and_port, default_port):
     host, _, port = re.match('^(.*)(:([0-9]*))?$', host_and_port).groups()
@@ -50,8 +51,8 @@ def fetchmail(fetchmailrc):
 
 def run(debug):
     try:
-        fetches = requests.get("http://" + os.environ.get("HOST_ADMIN", "admin") + "/internal/fetch").json()
-        smtphost, smtpport = extract_host_port(os.environ.get("HOST_SMTP", "smtp"), None)
+        fetches = requests.get("http://" + os.environ["ADMIN_ADDRESS"] + "/internal/fetch").json()
+        smtphost, smtpport = extract_host_port(os.environ["SMTP_ADDRESS"], None)
         if smtpport is None:
             smtphostport = smtphost
         else:
@@ -88,7 +89,7 @@ def run(debug):
                         user_info in error_message):
                     print(error_message)
             finally:
-                requests.post("http://" + os.environ.get("HOST_ADMIN", "admin") + "/internal/fetch/{}".format(fetch["id"]),
+                requests.post("http://" + os.environ["ADMIN_ADDRESS"] + "/internal/fetch/{}".format(fetch["id"]),
                     json=error_message.split("\n")[0]
                 )
     except Exception:
