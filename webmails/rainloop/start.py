@@ -9,7 +9,11 @@ from socrate import system, conf
 log.basicConfig(stream=sys.stderr, level=os.environ.get("LOG_LEVEL", "WARNING"))
 
 # Actual startup script
-os.environ["FRONT_ADDRESS"] = system.resolve_address(os.environ.get("HOST_FRONT", "front"))
+try:
+  os.environ["FRONT_ADDRESS"] = system.resolve_address(os.environ.get("HOST_FRONT", "front"))
+except NameError:
+  os.environ["FRONT_ADDRESS"] = None
+
 os.environ["IMAP_ADDRESS"] = system.resolve_address(os.environ.get("HOST_IMAP", "imap"))
 os.environ["SMTP_ADDRESS"] = system.get_host_address_from_environment("SMTP", "smtp")
 
@@ -43,4 +47,3 @@ else:
 os.system("chown -R www-data:www-data /data")
 
 os.execv("/usr/local/bin/apache2-foreground", ["apache2-foreground"])
-
