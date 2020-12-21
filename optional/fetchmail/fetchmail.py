@@ -32,7 +32,7 @@ os.environ["ADMIN_ADDRESS"] = system.get_host_address_from_environment("ADMIN", 
 os.environ["ADMIN_SMTP"] = system.get_host_address_from_environment("SMTP", "smtp")
 
 def extract_host_port(host_and_port, default_port):
-    host, _, port = re.match('^(.*)(:([0-9]*))?$', host_and_port).groups()
+    host, _, port = re.match('^(.*?)(:([0-9]*))?$', host_and_port).groups()
     return host, int(port) if port else default_port
 
 
