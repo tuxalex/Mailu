@@ -15,7 +15,7 @@ except NameError:
   os.environ["FRONT_ADDRESS"] = None
 
 os.environ["IMAP_ADDRESS"] = system.resolve_address(os.environ.get("HOST_IMAP", "imap"))
-os.environ["SMTP_ADDRESS"] = system.get_host_address_from_environment("SMTP", "smtp")
+os.environ["SMTP_ADDRESS"] = system.resolve_address(os.environ.get("HOST_SMTP", "imap"))
 
 os.environ["MAX_FILESIZE"] = str(int(int(os.environ.get("MESSAGE_SIZE_LIMIT"))*0.66/1048576))
 
