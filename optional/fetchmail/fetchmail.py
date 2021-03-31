@@ -52,7 +52,7 @@ def fetchmail(fetchmailrc):
 def run(debug):
     try:
         fetches = requests.get("http://" + os.environ["ADMIN_ADDRESS"] + "/internal/fetch").json()
-        smtphost, smtpport = extract_host_port(os.environ["SMTP_ADDRESS"], None)
+        smtphost, smtpport = extract_host_port(os.environ["SMTP_HOST"], None)
         if smtpport is None:
             smtphostport = smtphost
         else:
